@@ -4,6 +4,7 @@ import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
+import java.util.Iterator;
 
 public class MainGUI extends JFrame {
     private JPanel panel1;
@@ -11,6 +12,7 @@ public class MainGUI extends JFrame {
     private JButton button2;
     private JButton button3;
     private JList list1;
+    private JPanel textfieldpanel;
 
     private MainGUI(){
         CheckTimeDemon check = new CheckTimeDemon(this);
@@ -26,7 +28,6 @@ public class MainGUI extends JFrame {
         try {
             Utility.readAllTasks();
             refreshList();
-            CheckTimeDemon.refreshList();
             new Thread(check).start();
         }catch(IOException|ClassNotFoundException e){
             e.printStackTrace();
@@ -38,10 +39,21 @@ public class MainGUI extends JFrame {
         setMinimumSize(new Dimension(400,200));
         setVisible(true);
 
+
+
         ButtonActionListener buttonListener = new ButtonActionListener();
         button1.addActionListener(buttonListener);
         button2.addActionListener(buttonListener);
         button3.addActionListener(buttonListener);
+
+//        scrollpane1 = new JScrollPane(list1);
+//        textfieldpanel.add(scrollpane1);
+        //scrollpane1.setVisible(true);
+//        scrollpane1.createVerticalScrollBar();
+//        scrollpane1.createHorizontalScrollBar();
+//        scrollpane1.setWheelScrollingEnabled(true);
+
+
 
         list1.setCellRenderer(new CustomListRenderer());
         list1.addMouseListener(new MouseAdapter() {
@@ -52,7 +64,20 @@ public class MainGUI extends JFrame {
                 }
             }
         });
+        list1.addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent listSelectionEvent) {
+                if(listSelectionEvent.getValueIsAdjusting())button2.setEnabled(false);
+                else button2.setEnabled(true);
+            }
+        });
 
+        panel1.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent componentEvent) {
+                list1.setVisibleRowCount(getSize().height / 30);
+            }
+        });
     }
 
     private class ButtonActionListener implements ActionListener {
@@ -78,7 +103,11 @@ public class MainGUI extends JFrame {
 
 
     public void refreshList(){
-        list1.setListData(Utility.getAllTasks().toArray());
+        DefaultListModel model = new DefaultListModel();
+        for(Iterator<SimpleTask> iterator = Utility.getAllTasks().iterator(); iterator.hasNext();){
+            model.addElement(iterator.next());
+        }
+        list1.setModel(model);
     }
 
 

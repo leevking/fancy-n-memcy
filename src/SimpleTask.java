@@ -93,23 +93,11 @@ public class SimpleTask implements Task,Serializable {
         this.date = date;
     }
 
-    /**
-     * Метод возвращающий количество дней до завершения задачи
-     * @return количество дней до завершения задачи
-     */
-    @Override
-    public int getDaysLeft(){
-        return date.getDayOfYear()-LocalDateTime.now().getDayOfYear()
-        +(date.getYear()-LocalDateTime.now().getYear())*365;
-    }
 
-    /**
-     * Метод возвращающий количество часов до завершения задачи
-     * @return количество часов до завершения задачи
-     */
-    public int getHoursLeft(){
-        return date.getHour()-LocalDateTime.now().getHour()+(date.getDayOfYear()-LocalDateTime.now().getDayOfYear())*24
-                +(date.getYear()-LocalDateTime.now().getYear())*365*24;
+
+    public int getMinuteLeft(){
+        return (date.getHour()-LocalDateTime.now().getHour())*60+(date.getDayOfYear()-LocalDateTime.now().getDayOfYear())*24*60
+                +(date.getYear()-LocalDateTime.now().getYear())*365*24*60 + (date.getMinute()-LocalDateTime.now().getMinute());
     }
 
     /**

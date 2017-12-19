@@ -7,7 +7,7 @@ import java.awt.event.WindowEvent;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class DoItLaterDialog extends JFrame{
+public class DoItLaterDialog extends JDialog{
     private JTextArea textArea1;
     private JButton finishTask;
     private JButton doItLater;
@@ -15,11 +15,11 @@ public class DoItLaterDialog extends JFrame{
     private JLabel label2;
     private JPanel mailPanel;
     private JPanel textPanel;
-    SimpleTask task;
+    private boolean deleteAction=false;
+    final SimpleTask task;
 
-    public DoItLaterDialog(SimpleTask task){
-
-
+    public DoItLaterDialog(JFrame owner,SimpleTask task){
+        super(owner, "", true);
         this.task = task;
         label1.setText(task.getName());
         label2.setText(task.getDate().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm")));
@@ -28,43 +28,52 @@ public class DoItLaterDialog extends JFrame{
         setLocation(new Point(400,200));
         setMinimumSize(new Dimension(300,300));
         setContentPane(mailPanel);
-        setVisible(true);
         pack();
 
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
+        this.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent windowEvent) {
+                super.windowClosing(windowEvent);
+                task.setDate(LocalDateTime.now().plusMinutes(5));
+            }
+        });
 
         ButtonActionListener buttonActionListener =  new ButtonActionListener();
         finishTask.addActionListener(buttonActionListener);
         finishTask.setActionCommand("finishtask");
         doItLater.addActionListener(buttonActionListener);
         doItLater.setActionCommand("doitlater");
-
+        setVisible(true);
     }
 
     private class ButtonActionListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            synchronized (task) {
+            //synchronized (task) {
                 switch (e.getActionCommand()) {
                     case "finishtask":
                         System.out.println("finishtask");
-                        Utility.deleteTask(task);
-                        task.notifyAll();
+                        //Utility.deleteTask(task);
+                        deleteAction=true;
+                        //task.notifyAll();
                         System.out.println("Уведомлены потоки");
                         dispose();
                         break;
                     case "doitlater":
                         //вынести в отдельный метод
                         System.out.println("doitlater");
-                        task.setDate(LocalDateTime.now().plusDays(1));
-                        task.notify();
+                        task.setDate(LocalDateTime.now().plusMinutes(5));
+                       // task.notify();
                         dispose();
                         break;
-                }
+             //   }
             }
 
         }
     }
+
+    public boolean getAction(){return deleteAction;}
 
 }

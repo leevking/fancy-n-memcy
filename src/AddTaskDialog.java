@@ -1,5 +1,3 @@
-import jdk.nashorn.internal.scripts.JO;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -23,6 +21,7 @@ public class AddTaskDialog extends JDialog {
 //        contentPane.add(new JScrollPane(this.inputTaskDescription));
         buttonOK.addActionListener(buttonListener);
         buttonCancel.addActionListener(buttonListener);
+        inputTaskDate.setText(LocalDateTime.now().plusMinutes(5).format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm")));
         this.task=task;
         fillWithTaskInfo();
         setSize(400,300);
@@ -76,7 +75,8 @@ public class AddTaskDialog extends JDialog {
         }
         finally {
             if(date!=null)
-                if(chechActualTime(date)) {
+                if(Utility.checkActualTime(date)) {
+                    if(!inputTaskName.getText().isEmpty()&&!inputTaskName.getText().startsWith(" "))
                     if (task == null) {
                         Utility.addTask(new SimpleTask(
                                 inputTaskName.getText(),
@@ -84,8 +84,14 @@ public class AddTaskDialog extends JDialog {
                                 date));
                         dispose();
                     } else {
-                        task = new SimpleTask(inputTaskName.getText(), inputTaskDescription.getText(), date);
+                        task.setName(inputTaskName.getText());
+                        task.setDescription(inputTaskDescription.getText());
+                        task.setDate(date);
+                        //task = new SimpleTask(inputTaskName.getText(), inputTaskDescription.getText(), date);
                         dispose();
+                    }
+                    else {
+                        JOptionPane.showMessageDialog(this, "No name for the task", "Wrong name", JOptionPane.ERROR_MESSAGE);
                     }
                 }else JOptionPane.showMessageDialog(this, "Looks like your date is in the past", "Wrong date", JOptionPane.ERROR_MESSAGE);
         }
@@ -119,13 +125,6 @@ public class AddTaskDialog extends JDialog {
             }
         }
     }
-
-    private boolean chechActualTime(LocalDateTime date){
-        return (date.getHour()-LocalDateTime.now().getHour()+(date.getDayOfYear()-LocalDateTime.now().getDayOfYear())*24
-                +(date.getYear()-LocalDateTime.now().getYear())*365*24>0);
-    }
-
-
 
 
 }

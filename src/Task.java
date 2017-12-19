@@ -18,8 +18,6 @@ public interface Task {
 
     void setDate(LocalDateTime date);
 
-    int getDaysLeft();
-
     String toString();
 
 }

@@ -1,5 +1,7 @@
 import java.io.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * Класс содержащий в себе вспомогательные методы необходимые для работы с пулом задач и
@@ -13,6 +15,8 @@ public class Utility {
     private static int taskCounts;
     /**Коллекция для хранения всех задач*/
     private static ArrayList<SimpleTask> taskArray;
+
+    private static Iterator<SimpleTask> iterator;
 
     /**
      * Метод возвращает количество задач в пуле
@@ -36,7 +40,7 @@ public class Utility {
      */
     public static void addTask(SimpleTask newTask){
         if(taskArray==null){
-            taskArray = new ArrayList<SimpleTask>();
+            taskArray = new ArrayList<>();
         }
         taskArray.add(newTask);
         taskCounts++;
@@ -65,6 +69,10 @@ public class Utility {
 
     }
 
+    public static void setTaskArray(ArrayList<SimpleTask> newList){
+        taskArray = newList;
+    }
+
     /**
      * Считывание всех задач из файла, заданного константой
      * @throws IOException выбрасывается при невозможности создать поток для считывания из файла
@@ -75,6 +83,9 @@ public class Utility {
             ObjectInputStream ois = new ObjectInputStream(new FileInputStream(new File(SAVE_FILE_NAME)));
             bufArr = (ArrayList<SimpleTask>)ois.readObject();
         taskArray = bufArr;
+        if(taskArray==null){
+            taskArray = new ArrayList<SimpleTask>();
+        }
     }
 
     /**
@@ -94,6 +105,13 @@ public class Utility {
 //        return result;
 //    }
 
-
+    public static boolean checkActualTime(LocalDateTime date){
+        System.out.println(date.getHour()-LocalDateTime.now().getHour());
+        System.out.println((date.getDayOfYear()-LocalDateTime.now().getDayOfYear()));
+        System.out.println(date.getYear()-LocalDateTime.now().getYear());
+        System.out.println(date.getMinute()-LocalDateTime.now().getMinute());
+        return ((date.getHour()-LocalDateTime.now().getHour())*60+(date.getDayOfYear()-LocalDateTime.now().getDayOfYear())*24*60
+                +(date.getYear()-LocalDateTime.now().getYear())*365*24*60 + (date.getMinute()-LocalDateTime.now().getMinute()))>0;
+    }
 
 }

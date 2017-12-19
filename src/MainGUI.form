@@ -26,6 +26,7 @@
             <properties>
               <layoutOrientation value="1"/>
               <selectionBackground color="-5122386"/>
+              <selectionMode value="0"/>
             </properties>
           </component>
         </children>
@@ -55,6 +56,7 @@
             </constraints>
             <properties>
               <actionCommand value="changetask"/>
+              <enabled value="false"/>
               <label value="Change task"/>
               <text value="Change task"/>
             </properties>
@@ -65,8 +67,8 @@
             </constraints>
             <properties>
               <actionCommand value="deltask"/>
-              <label value="Delete task"/>
-              <text value="Delete task"/>
+              <label value="Finish task"/>
+              <text value="Finish task"/>
             </properties>
           </component>
           <vspacer id="f734d">
