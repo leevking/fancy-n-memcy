@@ -3,14 +3,16 @@ import sun.java2d.pipe.AAShapePipe;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
-import java.util.Iterator;
+import java.util.Timer;
+import java.util.TimerTask;
 
-public class CheckTimeDemon implements Runnable {
+public class CheckTimeDemon extends TimerTask implements Runnable {
 
     private boolean isClosed;
     private MainGUI GUI;
     private ArrayList<SimpleTask> taskArrayList = new ArrayList<SimpleTask>();
     private SimpleTask bufTask;
+
     public CheckTimeDemon(MainGUI GUI) {
         this.GUI = GUI;
         isClosed = false;
@@ -43,10 +45,11 @@ public class CheckTimeDemon implements Runnable {
                             if (new DoItLaterDialog(GUI, min).getAction()) taskArrayList.remove(min);
                         Utility.setTaskArray(taskArrayList);
                         GUI.refreshList();
-                        System.out.println("sleeps");
-                        Thread.sleep(5000);
+                        System.out.println("sleeps mins "+min.getMinuteLeft());
+                        if(min.getMinuteLeft()>0)Thread.sleep(min.getMinuteLeft()*60*1000);
                     } catch (InterruptedException | ConcurrentModificationException e) {
                         //e.printStackTrace();
+                        System.out.println("перезапуск проверки времмени");
                     }
                 }
             }

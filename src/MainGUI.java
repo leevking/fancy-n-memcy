@@ -5,6 +5,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.Timer;
 
 public class MainGUI extends JFrame {
     private JPanel panel1;
@@ -13,9 +14,12 @@ public class MainGUI extends JFrame {
     private JButton button3;
     private JList list1;
     private JPanel textfieldpanel;
+    private CheckTimeDemon check;
+    private Thread r;
 
     private MainGUI(){
-        CheckTimeDemon check = new CheckTimeDemon(this);
+        //Timer timer = new Timer(true);
+        check = new CheckTimeDemon(this);
         this.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent windowEvent) {
@@ -28,7 +32,10 @@ public class MainGUI extends JFrame {
         try {
             Utility.readAllTasks();
             refreshList();
-            new Thread(check).start();
+
+            //timer.schedule(check,0);
+            r = new Thread(check);
+            r.start();
         }catch(IOException|ClassNotFoundException e){
             e.printStackTrace();
         }
@@ -96,6 +103,7 @@ public class MainGUI extends JFrame {
                     new AddTaskDialog((SimpleTask)list1.getSelectedValue());
                     break;
             }
+            r.interrupt();
             refreshList();
         }
     }
@@ -108,6 +116,7 @@ public class MainGUI extends JFrame {
             model.addElement(iterator.next());
         }
         list1.setModel(model);
+
     }
 
 
